@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio of Alexander Giacomodonato, Mechatronics Engineering student building software and mechanical design projects.">
+    <title>Alexander Giacomodonato | Portfolio Refresh</title>
+    <script>
+        (() => {
+            const savedTheme = localStorage.getItem("portfolio-theme");
+            const preferredTheme = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+            document.documentElement.dataset.theme = savedTheme || preferredTheme;
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <button class="theme-toggle theme-toggle-floating" type="button" aria-label="Switch color theme" aria-pressed="false">
+        <span class="theme-toggle-text">Light Mode</span>
+    </button>
+
+    <header class="header">
+        <div class="container header-container">
+            <div class="brand-block">
+                <a href="#top" class="logo">Alexander Giacomodonato</a>
+                <span class="brand-subtitle">Mechatronics Engineering Portfolio</span>
+            </div>
+            <nav class="nav-menu" aria-label="Primary">
+                <ul class="nav-list">
+                    <li><a href="#top" class="nav-link">About</a></li>
+                    <li><a href="#projects" class="nav-link">Projects</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="mobile-menu-btn" type="button" aria-label="Toggle navigation" aria-expanded="false">
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="hero section-shell" id="top">
+            <div class="container hero-grid">
+                <div class="hero-copy reveal">
+                    <p class="eyebrow">About Me</p>
+                    <h1 class="hero-title">A portfolio centered on engineering clarity.</h1>
+                    <p class="hero-text">
+                        My name is Alexander Giacomodonato and I am a 19 year-old Mechatronics Engineering student in my first
+                        year at the University of Waterloo with a strong interest in both software programming and mechanical design.
+                        I enjoy building practical, well-designed systems that combine thoughtful engineering with clean user experiences.
+                    </p>
+                    <p class="hero-text">
+                        My programming strengths include problem solving, UI/UX design, debugging, and code optimization.
+                        I am motivated to continue developing technically rigorous and impactful solutions at the intersection of software and hardware.
+                    </p>
+                    <p class="hero-text">
+                        Outside of school, I am a driven and active individual who enjoys staying physically active through sports and movement,
+                        including squash, rock climbing, badminton, and pickleball.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="#projects" class="btn btn-primary">View Projects</a>
+                        <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+                    </div>
+                </div>
+
+                <aside class="hero-panel reveal">
+                    <p class="panel-label">Core Strengths</p>
+                    <ul class="hero-points">
+                        <li>Problem solving across software and hardware</li>
+                        <li>UI/UX thinking with practical implementation</li>
+                        <li>Mechanical design backed by technical precision</li>
+                    </ul>
+                    <div class="hero-meta">
+                        <div>
+                            <span class="meta-label">Focus</span>
+                            <strong>Software + Mechanical Systems</strong>
+                        </div>
+                        <div>
+                            <span class="meta-label">Based in</span>
+                            <strong>Waterloo, Ontario</strong>
+                        </div>
+                    </div>
+                    <div class="hero-tools">
+                        <span class="meta-label">Technologies & Tools</span>
+                        <ul class="skills-list hero-skills-list">
+                            <li>Arduino</li>
+                            <li>C++</li>
+                            <li>C#</li>
+                            <li>Python</li>
+                            <li>SolidWorks</li>
+                            <li>AutoCAD</li>
+                            <li>Streamlit</li>
+                            <li>Visual Studio</li>
+                            <li>VEX</li>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <section id="projects" class="section-shell">
+            <div class="container section-card reveal">
+                <div class="section-heading projects-heading">
+                    <div>
+                        <p class="eyebrow">Projects</p>
+                        <h2 class="section-title">A mix of software builds, robotic systems, and CAD work.</h2>
+                    </div>
+                    <p class="section-note">
+                        Search by project name or filter by technologies to browse the full set.
+                    </p>
+                </div>
+
+                <div class="filter-container">
+                    <div class="search-wrapper">
+                        <input type="text" id="search-input" placeholder="Search projects or skills..." aria-label="Search projects">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </div>
+                    <div class="filter-select-wrapper">
+                        <label class="filter-label" for="sort-filter">Filter</label>
+                        <select id="sort-filter" aria-label="Filter projects">
+                            <option value="featured">Featured First</option>
+                            <option value="az">A-Z</option>
+                            <option value="date-desc">Date: Newest</option>
+                            <option value="date-asc">Date: Oldest</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="projects-grid" id="projects-grid">
+                    <div class="loading-state">Loading projects...</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section-shell">
+            <div class="container contact-card reveal">
+                <div class="section-heading contact-heading">
+                    <p class="eyebrow">Contact</p>
+                    <h2 class="section-title">Open to conversations about projects, collaboration, and opportunities.</h2>
+                </div>
+
+                <div class="contact-layout">
+                    <form class="contact-form" action="#" method="POST">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required placeholder="Your Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" required placeholder="What is this regarding?">
+                        </div>
+                        <div class="form-group">
+                            <label for="topic">Topic</label>
+                            <select id="topic" name="topic" required>
+                                <option value="" disabled selected>Select a topic</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="project">Project Collaboration</option>
+                                <option value="hiring">Hiring / Job Opportunity</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div id="other-topic-group" class="form-group hidden">
+                            <label for="other-topic">Specify Topic</label>
+                            <input type="text" id="other-topic" name="other-topic" placeholder="Please specify...">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="5" required placeholder="Your message here..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-wide">Send Message</button>
+                    </form>
+
+                    <div class="contact-side">
+                        <p>
+                            The refreshed version keeps the same contact flow and social links, while simplifying the visual atmosphere so the content stands out first.
+                        </p>
+                        <div class="social-links">
+                            <a href="https://github.com/giacs116" target="_blank" rel="noreferrer" aria-label="GitHub" class="social-link">GitHub</a>
+                            <a href="https://www.linkedin.com/in/agiacomo/" target="_blank" rel="noreferrer" aria-label="LinkedIn" class="social-link">LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-container">
+            <p>&copy; 2026 Alexander Giacomodonato. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div id="project-modal" class="modal" aria-hidden="true">
+        <div class="modal-overlay" tabindex="-1"></div>
+        <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <button class="modal-close" type="button" aria-label="Close project details">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="modal-content" tabindex="-1"></div>
+        </div>
+    </div>
+
+    <script type="module" src="scripts/main.js"></script>
+    <script type="module" src="scripts/background.js"></script>
+</body>
+</html>
