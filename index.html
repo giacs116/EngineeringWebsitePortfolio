@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Portfolio of Alexander Giacomodonato, Mechatronics Engineering student building software and mechanical design projects.">
-    <title>Alexander Giacomodonato | Portfolio Refresh</title>
+    <title>Alexander Giacomodonato | Mechatronics Portfolio</title>
     <script>
         (() => {
             const savedTheme = localStorage.getItem("portfolio-theme");
@@ -14,30 +14,45 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
     <canvas id="ambient-canvas" aria-hidden="true"></canvas>
     <a href="#main-content" class="skip-link">Skip to content</a>
-    <button class="theme-toggle theme-toggle-floating" type="button" aria-label="Switch color theme" aria-pressed="false">
-        <span class="theme-toggle-text">Light Mode</span>
-    </button>
+
+    <div class="cursor-reticle" aria-hidden="true">
+        <span class="reticle-ring"></span>
+        <span class="reticle-dot"></span>
+    </div>
+    <div class="hud-readout" aria-hidden="true">
+        <span class="hud-coords">X <b id="hud-x">0000</b> · Y <b id="hud-y">0000</b></span>
+        <span class="hud-sep">/</span>
+        <span class="hud-tag">GIACOMODONATO.SYS</span>
+    </div>
 
     <header class="header">
         <div class="container header-container">
-            <div class="brand-block">
-                <a href="#top" class="logo">Alexander Giacomodonato</a>
-                <span class="brand-subtitle">Mechatronics Engineering Portfolio</span>
-            </div>
+            <a href="#top" class="logo">
+                <span class="logo-mark" aria-hidden="true">AG</span>
+                <span class="logo-text">
+                    Alexander Giacomodonato
+                    <span class="logo-sub">Mechatronics Engineering</span>
+                </span>
+            </a>
             <nav class="nav-menu" aria-label="Primary">
                 <ul class="nav-list">
-                    <li><a href="#top" class="nav-link">About</a></li>
-                    <li><a href="#projects" class="nav-link">Projects</a></li>
-                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                    <li><a href="#top" class="nav-link"><span class="nav-index">01</span>Profile</a></li>
+                    <li><a href="#featured" class="nav-link"><span class="nav-index">02</span>Featured</a></li>
+                    <li><a href="#projects" class="nav-link"><span class="nav-index">03</span>Index</a></li>
+                    <li><a href="#contact" class="nav-link"><span class="nav-index">04</span>Contact</a></li>
                 </ul>
             </nav>
             <div class="header-actions">
+                <button class="theme-toggle" type="button" aria-label="Switch color theme" aria-pressed="false">
+                    <span class="theme-toggle-track" aria-hidden="true"><span class="theme-toggle-thumb"></span></span>
+                    <span class="theme-toggle-text">DARK</span>
+                </button>
                 <button class="mobile-menu-btn" type="button" aria-label="Toggle navigation" aria-expanded="false">
                     <span class="hamburger"></span>
                 </button>
@@ -46,50 +61,74 @@
     </header>
 
     <main id="main-content">
+        <!-- ============ 01 / PROFILE ============ -->
         <section class="hero section-shell" id="top">
-            <div class="container hero-grid">
-                <div class="hero-copy reveal">
-                    <p class="eyebrow">About Me</p>
-                    <h1 class="hero-title">A portfolio centered on engineering clarity.</h1>
-                    <p class="hero-text">
-                        My name is Alexander Giacomodonato and I am a 19 year-old Mechatronics Engineering student in my first
-                        year at the University of Waterloo with a strong interest in both software programming and mechanical design.
-                        I enjoy building practical, well-designed systems that combine thoughtful engineering with clean user experiences.
-                    </p>
-                    <p class="hero-text">
-                        My programming strengths include problem solving, UI/UX design, debugging, and code optimization.
-                        I am motivated to continue developing technically rigorous and impactful solutions at the intersection of software and hardware.
-                    </p>
-                    <p class="hero-text">
-                        Outside of school, I am a driven and active individual who enjoys staying physically active through sports and movement,
-                        including squash, rock climbing, badminton, and pickleball.
-                    </p>
-                    <div class="hero-actions">
-                        <a href="#projects" class="btn btn-primary">View Projects</a>
-                        <a href="#contact" class="btn btn-secondary">Get In Touch</a>
-                    </div>
+            <div class="container">
+                <div class="hero-topline reveal">
+                    <p class="eyebrow"><span class="eyebrow-index">01</span> Profile</p>
+                    <p class="status-pill"><span class="status-dot" aria-hidden="true"></span>Open to co-op &amp; collaboration</p>
                 </div>
 
-                <aside class="hero-panel reveal">
-                    <p class="panel-label">Core Strengths</p>
-                    <ul class="hero-points">
-                        <li>Problem solving across software and hardware</li>
-                        <li>UI/UX thinking with practical implementation</li>
-                        <li>Mechanical design backed by technical precision</li>
-                    </ul>
-                    <div class="hero-meta">
-                        <div>
-                            <span class="meta-label">Focus</span>
-                            <strong>Software + Mechanical Systems</strong>
+                <h1 class="hero-title">
+                    <span class="hero-line" data-scramble>ALEXANDER</span>
+                    <span class="hero-line hero-line-accent" data-scramble>GIACOMODONATO</span>
+                </h1>
+
+                <p class="hero-role">
+                    <span class="role-static">Mechatronics Engineering @ University of Waterloo —</span>
+                    <span class="role-rotator" id="role-rotator" aria-label="Software Development, Mechanical Design, Robotics and Embedded Systems, UI/UX Engineering">Software Development</span><span class="role-caret" aria-hidden="true"></span>
+                </p>
+
+                <div class="hero-grid">
+                    <div class="hero-copy reveal">
+                        <p class="hero-text">
+                            I'm a 19-year-old Mechatronics Engineering student in my first year at the University of Waterloo,
+                            working at the intersection of software and hardware. I enjoy building practical, well-designed
+                            systems that combine thoughtful engineering with clean user experiences.
+                        </p>
+                        <p class="hero-text">
+                            My strengths include problem solving, UI/UX design, debugging, and code optimization — and I'm
+                            motivated to keep developing technically rigorous, impactful solutions. Off the clock you'll find me
+                            on a squash court, a climbing wall, or a pickleball court.
+                        </p>
+                        <div class="hero-actions">
+                            <a href="#featured" class="btn btn-primary magnetic">View Featured Work<span class="btn-arrow" aria-hidden="true">↘</span></a>
+                            <a href="#contact" class="btn btn-secondary magnetic">Get In Touch</a>
                         </div>
-                        <div>
-                            <span class="meta-label">Based in</span>
-                            <strong>Waterloo, Ontario</strong>
-                        </div>
+
+                        <dl class="hero-stats">
+                            <div class="stat">
+                                <dt>Projects</dt>
+                                <dd><span class="stat-num" data-count="9">0</span></dd>
+                            </div>
+                            <div class="stat">
+                                <dt>Technologies</dt>
+                                <dd><span class="stat-num" data-count="9">0</span></dd>
+                            </div>
+                            <div class="stat">
+                                <dt>Disciplines</dt>
+                                <dd><span class="stat-num" data-count="2">0</span></dd>
+                            </div>
+                            <div class="stat">
+                                <dt>Building since</dt>
+                                <dd><span class="stat-num" data-count="2024" data-plain>0</span></dd>
+                            </div>
+                        </dl>
                     </div>
-                    <div class="hero-tools">
-                        <span class="meta-label">Technologies & Tools</span>
-                        <ul class="skills-list hero-skills-list">
+
+                    <aside class="hero-panel corner-frame reveal">
+                        <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                        <p class="panel-label">// SPEC SHEET</p>
+                        <table class="spec-table">
+                            <tbody>
+                                <tr><th scope="row">Class</th><td>Mechatronics '30</td></tr>
+                                <tr><th scope="row">Base</th><td>Waterloo, Ontario</td></tr>
+                                <tr><th scope="row">Focus</th><td>Software + Mechanical Systems</td></tr>
+                                <tr><th scope="row">Core</th><td>Problem solving · UI/UX · CAD</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="panel-label">// TOOLCHAIN</p>
+                        <ul class="skills-list">
                             <li>Arduino</li>
                             <li>C++</li>
                             <li>C#</li>
@@ -100,98 +139,135 @@
                             <li>Visual Studio</li>
                             <li>VEX</li>
                         </ul>
-                    </div>
-                </aside>
+                    </aside>
+                </div>
+            </div>
+            <a href="#featured" class="scroll-cue" aria-label="Scroll to featured work">
+                <span class="scroll-cue-text">SCROLL</span>
+                <span class="scroll-cue-line" aria-hidden="true"></span>
+            </a>
+        </section>
+
+        <!-- ============ TOOL MARQUEE ============ -->
+        <div class="marquee" aria-hidden="true">
+            <div class="marquee-track">
+                <span>Arduino</span><span>C++</span><span>C#</span><span>Python</span><span>SolidWorks</span><span>AutoCAD</span><span>Streamlit</span><span>Visual Studio</span><span>VEX</span><span>Git</span>
+                <span>Arduino</span><span>C++</span><span>C#</span><span>Python</span><span>SolidWorks</span><span>AutoCAD</span><span>Streamlit</span><span>Visual Studio</span><span>VEX</span><span>Git</span>
+            </div>
+        </div>
+
+        <!-- ============ 02 / FEATURED ============ -->
+        <section id="featured" class="section-shell">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <p class="eyebrow"><span class="eyebrow-index">02</span> Featured Work</p>
+                    <h2 class="section-title" data-scramble>SELECTED BUILDS</h2>
+                    <p class="section-note">Two projects that best represent the software × hardware range. Open either for the full datasheet.</p>
+                </div>
+                <div class="spotlight-list" id="spotlight-list"></div>
             </div>
         </section>
 
+        <!-- ============ 03 / INDEX ============ -->
         <section id="projects" class="section-shell">
-            <div class="container section-card reveal">
-                <div class="section-heading projects-heading">
-                    <div>
-                        <p class="eyebrow">Projects</p>
-                        <h2 class="section-title">A mix of software builds, robotic systems, and CAD work.</h2>
-                    </div>
-                    <p class="section-note">
-                        Search by project name or filter by technologies to browse the full set.
-                    </p>
+            <div class="container">
+                <div class="section-heading reveal">
+                    <p class="eyebrow"><span class="eyebrow-index">03</span> Project Index</p>
+                    <h2 class="section-title" data-scramble>FULL ARCHIVE</h2>
+                    <p class="section-note">Every build on record — software, robotics, and CAD. Search by name or technology.</p>
                 </div>
 
-                <div class="filter-container">
-                    <div class="search-wrapper">
-                        <input type="text" id="search-input" placeholder="Search projects or skills..." aria-label="Search projects">
+                <div class="filter-container reveal">
+                    <div class="search-wrapper corner-frame">
+                        <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
                         <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"></circle>
                             <path d="m21 21-4.35-4.35"></path>
                         </svg>
+                        <input type="text" id="search-input" placeholder="QUERY: project or technology_" aria-label="Search projects">
                     </div>
                     <div class="filter-select-wrapper">
-                        <label class="filter-label" for="sort-filter">Filter</label>
+                        <label class="filter-label" for="sort-filter">SORT</label>
                         <select id="sort-filter" aria-label="Filter projects">
                             <option value="featured">Featured First</option>
-                            <option value="az">A-Z</option>
+                            <option value="az">A–Z</option>
                             <option value="date-desc">Date: Newest</option>
                             <option value="date-asc">Date: Oldest</option>
                         </select>
                     </div>
+                    <p class="result-count" id="result-count" role="status"></p>
                 </div>
 
                 <div class="projects-grid" id="projects-grid">
-                    <div class="loading-state">Loading projects...</div>
+                    <div class="loading-state">LOADING INDEX…</div>
                 </div>
             </div>
         </section>
 
+        <!-- ============ 04 / CONTACT ============ -->
         <section id="contact" class="section-shell">
-            <div class="container contact-card reveal">
-                <div class="section-heading contact-heading">
-                    <p class="eyebrow">Contact</p>
-                    <h2 class="section-title">Open to conversations about projects, collaboration, and opportunities.</h2>
+            <div class="container">
+                <div class="section-heading reveal">
+                    <p class="eyebrow"><span class="eyebrow-index">04</span> Contact</p>
+                    <h2 class="section-title" data-scramble>OPEN CHANNEL</h2>
+                    <p class="section-note">Projects, collaboration, co-op opportunities — the inbox is open.</p>
                 </div>
 
-                <div class="contact-layout">
-                    <form class="contact-form" action="#" method="POST">
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" name="name" required placeholder="Your Name">
+                <div class="contact-layout reveal">
+                    <form class="contact-form corner-frame" action="#" method="POST">
+                        <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" name="name" required placeholder="Your name">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required placeholder="your.email@example.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="subject">Subject</label>
-                            <input type="text" id="subject" name="subject" required placeholder="What is this regarding?">
-                        </div>
-                        <div class="form-group">
-                            <label for="topic">Topic</label>
-                            <select id="topic" name="topic" required>
-                                <option value="" disabled selected>Select a topic</option>
-                                <option value="general">General Inquiry</option>
-                                <option value="project">Project Collaboration</option>
-                                <option value="hiring">Hiring / Job Opportunity</option>
-                                <option value="other">Other</option>
-                            </select>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subject">Subject</label>
+                                <input type="text" id="subject" name="subject" required placeholder="What is this regarding?">
+                            </div>
+                            <div class="form-group">
+                                <label for="topic">Topic</label>
+                                <select id="topic" name="topic" required>
+                                    <option value="" disabled selected>Select a topic</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="project">Project Collaboration</option>
+                                    <option value="hiring">Hiring / Job Opportunity</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
                         </div>
                         <div id="other-topic-group" class="form-group hidden">
                             <label for="other-topic">Specify Topic</label>
-                            <input type="text" id="other-topic" name="other-topic" placeholder="Please specify...">
+                            <input type="text" id="other-topic" name="other-topic" placeholder="Please specify…">
                         </div>
                         <div class="form-group">
                             <label for="message">Message</label>
-                            <textarea id="message" name="message" rows="5" required placeholder="Your message here..."></textarea>
+                            <textarea id="message" name="message" rows="5" required placeholder="Your message here…"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-wide">Send Message</button>
+                        <button type="submit" class="btn btn-primary btn-wide magnetic">Transmit Message<span class="btn-arrow" aria-hidden="true">↘</span></button>
                     </form>
 
                     <div class="contact-side">
-                        <p>
-                            The refreshed version keeps the same contact flow and social links, while simplifying the visual atmosphere so the content stands out first.
-                        </p>
+                        <p class="panel-label">// DIRECT LINKS</p>
                         <div class="social-links">
-                            <a href="https://github.com/giacs116" target="_blank" rel="noreferrer" aria-label="GitHub" class="social-link">GitHub</a>
-                            <a href="https://www.linkedin.com/in/agiacomo/" target="_blank" rel="noreferrer" aria-label="LinkedIn" class="social-link">LinkedIn</a>
+                            <a href="https://github.com/giacs116" target="_blank" rel="noreferrer" class="social-link magnetic">
+                                <span class="social-index">A</span>GitHub<span class="btn-arrow" aria-hidden="true">↗</span>
+                            </a>
+                            <a href="https://www.linkedin.com/in/agiacomo/" target="_blank" rel="noreferrer" class="social-link magnetic">
+                                <span class="social-index">B</span>LinkedIn<span class="btn-arrow" aria-hidden="true">↗</span>
+                            </a>
                         </div>
+                        <p class="contact-note">
+                            Fastest response is usually through the form or LinkedIn. If you're reaching out about a specific
+                            project, mention its index code (e.g. <span class="mono-inline">P-09</span>) and I'll know exactly
+                            what you mean.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -200,13 +276,16 @@
 
     <footer class="footer">
         <div class="container footer-container">
+            <p class="footer-mono">43.4723° N, 80.5449° W — WATERLOO, ON</p>
             <p>&copy; 2026 Alexander Giacomodonato. All rights reserved.</p>
+            <p class="footer-mono">EOF /</p>
         </div>
     </footer>
 
     <div id="project-modal" class="modal" aria-hidden="true">
         <div class="modal-overlay" tabindex="-1"></div>
-        <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-container corner-frame" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
             <button class="modal-close" type="button" aria-label="Close project details">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>

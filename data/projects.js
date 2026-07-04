@@ -42,7 +42,7 @@ const projects = [
         title: "The Scale",
         shortDescription: "A data visualization tool built with Streamlit and Python.",
         longDescription: "A web-based application that helps users understand their overall health by inputting physiological and cognitive metrics including heart rate, BMI, reaction speed, EQ, and IQ. The app generates a personalized composite score and was developed collaboratively using Git.",
-        year: "2025-2026",
+        year: "2025-Present",
         role: "Self Assessment Platform",
         tech: ["Python", "Streamlit"],
         highlights: [
@@ -80,7 +80,7 @@ const projects = [
         title: "Glass Coffee Table",
         shortDescription: "A furniture design project modeled in SolidWorks.",
         longDescription: "A surface-modeling exercise focused on more advanced forms, direct editing, and precise control of shape development in SolidWorks.",
-        year: "2025-2026",
+        year: "2025-Present",
         role: "SolidWorks Part: Surfaces & Direct Editing",
         tech: ["SolidWorks"],
         highlights: [
@@ -99,7 +99,7 @@ const projects = [
         title: "Complex Vase",
         shortDescription: "A detailed vase design showcasing advanced surface modeling and direct editing techniques in SolidWorks.",
         longDescription: "A more sculptural CAD project built around reference planes, 3D sketches, filled surfaces, and flexible finishing operations to create a complex form.",
-        year: "2025-2026",
+        year: "2025-Present",
         role: "SolidWorks Part: Surfaces & Direct Editing",
         tech: ["SolidWorks"],
         highlights: [
@@ -118,7 +118,7 @@ const projects = [
         title: "Tapered Thread",
         shortDescription: "A precision modeling project demonstrating tapered thread creation in SolidWorks.",
         longDescription: "A technical threading exercise using helix and spiral geometry, reference planes, and sweep operations to produce accurate tapered thread profiles.",
-        year: "2025-2026",
+        year: "2025-Present",
         role: "SolidWorks Part: Thread",
         tech: ["SolidWorks"],
         highlights: [

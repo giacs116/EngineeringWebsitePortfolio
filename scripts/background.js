@@ -1,35 +1,62 @@
-const canvas = document.getElementById("ambient-canvas");
+// Reactive schematic layer: drifting node network + cursor crosshair,
+// drawn over the static CSS drafting grid.
 
-if (canvas) {
+const canvas = document.getElementById("ambient-canvas");
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+if (canvas && !prefersReducedMotion) {
     const context = canvas.getContext("2d");
-    let blobs = createBlobs();
-    const pointer = {
-        x: window.innerWidth * 0.5,
-        y: window.innerHeight * 0.45,
-        targetX: window.innerWidth * 0.5,
-        targetY: window.innerHeight * 0.45,
-        active: false
-    };
 
     let width = 0;
     let height = 0;
+    let nodes = [];
+    let palette = getPalette();
     let animationFrame = 0;
 
-    function createBlobs() {
+    const pointer = {
+        x: -1000,
+        y: -1000,
+        targetX: -1000,
+        targetY: -1000,
+        active: false
+    };
+
+    const NODE_SPACING = 26000; // px^2 of screen area per node
+    const LINK_DISTANCE = 150;
+    const POINTER_RADIUS = 220;
+
+    function getPalette() {
         const isLight = document.documentElement.dataset.theme === "light";
         return isLight
-            ? [
-                { x: 0.18, y: 0.2, radius: 180, color: "rgba(166, 128, 255, 0.16)", dx: 0.00018, dy: 0.00012 },
-                { x: 0.78, y: 0.22, radius: 230, color: "rgba(227, 210, 255, 0.18)", dx: -0.00015, dy: 0.0001 },
-                { x: 0.68, y: 0.76, radius: 210, color: "rgba(137, 95, 229, 0.1)", dx: -0.00012, dy: -0.00014 },
-                { x: 0.25, y: 0.72, radius: 170, color: "rgba(203, 180, 255, 0.13)", dx: 0.00011, dy: -0.00008 }
-            ]
-            : [
-                { x: 0.18, y: 0.2, radius: 180, color: "rgba(160, 112, 255, 0.17)", dx: 0.00018, dy: 0.00012 },
-                { x: 0.78, y: 0.22, radius: 230, color: "rgba(116, 73, 222, 0.15)", dx: -0.00015, dy: 0.0001 },
-                { x: 0.68, y: 0.76, radius: 210, color: "rgba(224, 198, 255, 0.1)", dx: -0.00012, dy: -0.00014 },
-                { x: 0.25, y: 0.72, radius: 170, color: "rgba(136, 90, 233, 0.12)", dx: 0.00011, dy: -0.00008 }
-            ];
+            ? {
+                node: "rgba(30, 70, 140, 0.35)",
+                link: "30, 70, 140",
+                crosshair: "rgba(193, 77, 0, 0.35)",
+                crosshairTick: "rgba(193, 77, 0, 0.55)",
+                pointerLink: "193, 77, 0"
+            }
+            : {
+                node: "rgba(230, 238, 250, 0.28)",
+                link: "230, 238, 250",
+                crosshair: "rgba(255, 178, 36, 0.22)",
+                crosshairTick: "rgba(255, 178, 36, 0.5)",
+                pointerLink: "255, 178, 36"
+            };
+    }
+
+    function createNodes() {
+        const count = Math.max(24, Math.round((width * height) / NODE_SPACING));
+        const list = [];
+        for (let i = 0; i < count; i += 1) {
+            list.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.28,
+                vy: (Math.random() - 0.5) * 0.28,
+                size: Math.random() < 0.16 ? 2.4 : 1.4
+            });
+        }
+        return list;
     }
 
     function resize() {
@@ -41,106 +68,120 @@ if (canvas) {
         canvas.style.width = `${width}px`;
         canvas.style.height = `${height}px`;
         context.setTransform(ratio, 0, 0, ratio, 0, 0);
+        nodes = createNodes();
     }
 
-    function drawGrid() {
-        context.strokeStyle = document.documentElement.dataset.theme === "light"
-            ? "rgba(134, 102, 191, 0.08)"
-            : "rgba(154, 118, 226, 0.07)";
+    function drawNodes() {
+        for (const node of nodes) {
+            node.x += node.vx;
+            node.y += node.vy;
+
+            if (node.x < -20) node.x = width + 20;
+            if (node.x > width + 20) node.x = -20;
+            if (node.y < -20) node.y = height + 20;
+            if (node.y > height + 20) node.y = -20;
+
+            // gentle drift away from the pointer
+            if (pointer.active) {
+                const dx = node.x - pointer.x;
+                const dy = node.y - pointer.y;
+                const dist = Math.hypot(dx, dy);
+                if (dist > 0 && dist < 90) {
+                    node.x += (dx / dist) * 0.6;
+                    node.y += (dy / dist) * 0.6;
+                }
+            }
+
+            context.fillStyle = palette.node;
+            context.fillRect(node.x - node.size / 2, node.y - node.size / 2, node.size, node.size);
+        }
+    }
+
+    function drawLinks() {
+        for (let i = 0; i < nodes.length; i += 1) {
+            const a = nodes[i];
+
+            for (let j = i + 1; j < nodes.length; j += 1) {
+                const b = nodes[j];
+                const dx = a.x - b.x;
+                const dy = a.y - b.y;
+                if (Math.abs(dx) > LINK_DISTANCE || Math.abs(dy) > LINK_DISTANCE) {
+                    continue;
+                }
+                const dist = Math.hypot(dx, dy);
+                if (dist < LINK_DISTANCE) {
+                    const alpha = (1 - dist / LINK_DISTANCE) * 0.1;
+                    context.strokeStyle = `rgba(${palette.link}, ${alpha.toFixed(3)})`;
+                    context.lineWidth = 1;
+                    context.beginPath();
+                    context.moveTo(a.x, a.y);
+                    context.lineTo(b.x, b.y);
+                    context.stroke();
+                }
+            }
+
+            // highlight links near the pointer
+            if (pointer.active) {
+                const pdx = a.x - pointer.x;
+                const pdy = a.y - pointer.y;
+                const pdist = Math.hypot(pdx, pdy);
+                if (pdist < POINTER_RADIUS) {
+                    const alpha = (1 - pdist / POINTER_RADIUS) * 0.35;
+                    context.strokeStyle = `rgba(${palette.pointerLink}, ${alpha.toFixed(3)})`;
+                    context.lineWidth = 1;
+                    context.beginPath();
+                    context.moveTo(a.x, a.y);
+                    context.lineTo(pointer.x, pointer.y);
+                    context.stroke();
+                }
+            }
+        }
+    }
+
+    function drawCrosshair() {
+        if (!pointer.active) {
+            return;
+        }
+
+        pointer.x += (pointer.targetX - pointer.x) * 0.14;
+        pointer.y += (pointer.targetY - pointer.y) * 0.14;
+
+        context.strokeStyle = palette.crosshair;
         context.lineWidth = 1;
+        context.setLineDash([2, 6]);
 
-        const spacing = 56;
-        for (let x = 0; x < width; x += spacing) {
-            context.beginPath();
-            context.moveTo(x, 0);
-            context.lineTo(x, height);
-            context.stroke();
-        }
-
-        for (let y = 0; y < height; y += spacing) {
-            context.beginPath();
-            context.moveTo(0, y);
-            context.lineTo(width, y);
-            context.stroke();
-        }
-    }
-
-    function drawPointerGlow() {
-        pointer.x += (pointer.targetX - pointer.x) * 0.08;
-        pointer.y += (pointer.targetY - pointer.y) * 0.08;
-
-        const outerGlow = context.createRadialGradient(
-            pointer.x,
-            pointer.y,
-            0,
-            pointer.x,
-            pointer.y,
-            280
-        );
-        if (document.documentElement.dataset.theme === "light") {
-            outerGlow.addColorStop(0, "rgba(171, 130, 255, 0.16)");
-            outerGlow.addColorStop(0.45, "rgba(231, 214, 255, 0.18)");
-        } else {
-            outerGlow.addColorStop(0, "rgba(166, 121, 255, 0.18)");
-            outerGlow.addColorStop(0.45, "rgba(110, 74, 214, 0.14)");
-        }
-        outerGlow.addColorStop(1, "rgba(8, 12, 20, 0)");
-
-        context.fillStyle = outerGlow;
         context.beginPath();
-        context.arc(pointer.x, pointer.y, 280, 0, Math.PI * 2);
-        context.fill();
+        context.moveTo(0, pointer.y);
+        context.lineTo(width, pointer.y);
+        context.stroke();
 
-        const innerGlow = context.createRadialGradient(
-            pointer.x,
-            pointer.y,
-            0,
-            pointer.x,
-            pointer.y,
-            120
-        );
-        innerGlow.addColorStop(0, document.documentElement.dataset.theme === "light"
-            ? "rgba(236, 226, 255, 0.22)"
-            : "rgba(214, 188, 255, 0.18)");
-        innerGlow.addColorStop(1, "rgba(8, 12, 20, 0)");
-
-        context.fillStyle = innerGlow;
         context.beginPath();
-        context.arc(pointer.x, pointer.y, 120, 0, Math.PI * 2);
-        context.fill();
-    }
+        context.moveTo(pointer.x, 0);
+        context.lineTo(pointer.x, height);
+        context.stroke();
 
-    function drawBlobs() {
-        blobs.forEach((blob) => {
-            blob.x += blob.dx;
-            blob.y += blob.dy;
+        context.setLineDash([]);
 
-            if (blob.x < 0.05 || blob.x > 0.95) blob.dx *= -1;
-            if (blob.y < 0.08 || blob.y > 0.92) blob.dy *= -1;
-
-            const gradient = context.createRadialGradient(
-                blob.x * width,
-                blob.y * height,
-                0,
-                blob.x * width,
-                blob.y * height,
-                blob.radius
-            );
-
-            gradient.addColorStop(0, blob.color);
-            gradient.addColorStop(1, "rgba(8, 12, 20, 0)");
-            context.fillStyle = gradient;
-            context.beginPath();
-            context.arc(blob.x * width, blob.y * height, blob.radius, 0, Math.PI * 2);
-            context.fill();
-        });
+        // edge ticks marking the pointer's axes
+        context.strokeStyle = palette.crosshairTick;
+        context.lineWidth = 2;
+        context.beginPath();
+        context.moveTo(0, pointer.y);
+        context.lineTo(10, pointer.y);
+        context.moveTo(width - 10, pointer.y);
+        context.lineTo(width, pointer.y);
+        context.moveTo(pointer.x, 0);
+        context.lineTo(pointer.x, 10);
+        context.moveTo(pointer.x, height - 10);
+        context.lineTo(pointer.x, height);
+        context.stroke();
     }
 
     function render() {
         context.clearRect(0, 0, width, height);
-        drawGrid();
-        drawPointerGlow();
-        drawBlobs();
+        drawCrosshair();
+        drawLinks();
+        drawNodes();
         animationFrame = window.requestAnimationFrame(render);
     }
 
@@ -148,18 +189,28 @@ if (canvas) {
     render();
 
     window.addEventListener("resize", resize);
+
     window.addEventListener("mousemove", (event) => {
+        if (!pointer.active) {
+            pointer.x = event.clientX;
+            pointer.y = event.clientY;
+        }
         pointer.targetX = event.clientX;
         pointer.targetY = event.clientY;
         pointer.active = true;
     });
-    document.addEventListener("themechange", () => {
-        blobs = createBlobs();
-    });
-    window.addEventListener("mouseleave", () => {
-        pointer.targetX = width * 0.5;
-        pointer.targetY = height * 0.45;
+
+    document.addEventListener("mouseleave", () => {
         pointer.active = false;
+        pointer.x = -1000;
+        pointer.y = -1000;
+        pointer.targetX = -1000;
+        pointer.targetY = -1000;
     });
+
+    document.addEventListener("themechange", () => {
+        palette = getPalette();
+    });
+
     window.addEventListener("beforeunload", () => window.cancelAnimationFrame(animationFrame));
 }

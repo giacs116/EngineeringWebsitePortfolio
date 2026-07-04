@@ -1,9 +1,14 @@
 import projects from "../data/projects.js";
 
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isFinePointer = window.matchMedia("(pointer: fine)").matches;
+
 document.addEventListener("DOMContentLoaded", () => {
     const projectsGrid = document.getElementById("projects-grid");
+    const spotlightList = document.getElementById("spotlight-list");
     const searchInput = document.getElementById("search-input");
     const sortFilter = document.getElementById("sort-filter");
+    const resultCount = document.getElementById("result-count");
     const modal = document.getElementById("project-modal");
     const modalContent = modal.querySelector(".modal-content");
     const modalCloseBtn = modal.querySelector(".modal-close");
@@ -20,10 +25,65 @@ document.addEventListener("DOMContentLoaded", () => {
     let searchQuery = "";
     let sortMode = "featured";
 
+    renderSpotlight();
     renderProjects();
     initializeThemeToggle();
     setupEventListeners();
     revealSections();
+    initScrambleHeadings();
+    initRoleRotator();
+    initCounters();
+    initCursorHud();
+    initMagneticButtons();
+
+    /* ============ FEATURED SPOTLIGHT ============ */
+
+    function renderSpotlight() {
+        const spotlightIds = [9, 2]; // SmartMitt, VEX Pen-Plotter Robot
+        const featured = spotlightIds
+            .map((id) => projects.find((project) => project.id === id))
+            .filter(Boolean);
+
+        spotlightList.innerHTML = featured.map((project, index) => `
+            <article class="spotlight-item reveal" data-id="${project.id}">
+                <div class="spotlight-media corner-frame tilt" data-open="${project.id}" data-tilt-max="4">
+                    <span class="corners" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+                    <span class="spotlight-code">F-${String(index + 1).padStart(2, "0")}</span>
+                    ${project.image
+                        ? `<img src="${project.image}" alt="${project.title} preview" loading="lazy">`
+                        : `<div class="spotlight-placeholder">NO VISUAL ON FILE</div>`}
+                </div>
+                <div class="spotlight-body">
+                    <p class="spotlight-meta">
+                        <span class="meta-year">${project.year}</span>
+                        <span class="meta-sep">//</span>
+                        <span>${project.role}</span>
+                    </p>
+                    <h3 class="spotlight-title">${project.title}</h3>
+                    <p class="spotlight-desc">${project.shortDescription}</p>
+                    <ul class="spotlight-highlights">
+                        ${project.highlights.slice(0, 3).map((highlight) => `<li>${highlight}</li>`).join("")}
+                    </ul>
+                    <div class="card-tech spotlight-tech">
+                        ${project.tech.map((tech) => `<span>${tech}</span>`).join("")}
+                    </div>
+                    <div class="spotlight-actions">
+                        <button type="button" class="btn btn-primary magnetic" data-open="${project.id}">Open Datasheet<span class="btn-arrow" aria-hidden="true">↘</span></button>
+                        ${project.githubUrl ? `<a href="${project.githubUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary magnetic">View Code</a>` : ""}
+                        ${!project.githubUrl && project.googleDriveUrl ? `<a href="${project.googleDriveUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary magnetic">Open Drive</a>` : ""}
+                    </div>
+                </div>
+            </article>
+        `).join("");
+
+        spotlightList.querySelectorAll("[data-open]").forEach((element) => {
+            element.addEventListener("click", () => openModal(Number(element.dataset.open)));
+        });
+
+        initTilt(spotlightList);
+    }
+
+    /* ============ PROJECT INDEX GRID ============ */
 
     function renderProjects() {
         const query = searchQuery.toLowerCase();
@@ -34,24 +94,31 @@ document.addEventListener("DOMContentLoaded", () => {
             )
             .sort((a, b) => compareProjects(a, b, sortMode));
 
+        if (resultCount) {
+            resultCount.textContent = `${String(filteredProjects.length).padStart(2, "0")} / ${String(projects.length).padStart(2, "0")} records`;
+        }
+
         if (filteredProjects.length === 0) {
             projectsGrid.innerHTML = `
                 <div class="empty-state">
-                    <h3>No projects found</h3>
-                    <p>Try a different search term or technology filter.</p>
+                    <h3>No records found</h3>
+                    <p>QUERY RETURNED 0 RESULTS — TRY A DIFFERENT TERM OR TECHNOLOGY.</p>
                 </div>
             `;
             return;
         }
 
         projectsGrid.innerHTML = filteredProjects.map((project) => `
-            <article class="project-card" data-id="${project.id}">
+            <article class="project-card tilt" data-id="${project.id}" data-tilt-max="6" tabindex="0" role="button" aria-label="Open details for ${project.title}">
                 <div class="card-top">
-                    <span class="project-year">${project.year}</span>
-                    <div class="external-links">
-                        ${project.githubUrl ? iconLink(project.githubUrl, "GitHub", githubIcon()) : ""}
-                        ${project.googleDriveUrl ? iconLink(project.googleDriveUrl, "Google Drive", driveIcon()) : ""}
-                        ${project.liveUrl ? iconLink(project.liveUrl, "Live Demo", externalIcon()) : ""}
+                    <span class="card-index">P-${String(project.id).padStart(2, "0")}</span>
+                    <div class="card-meta-right">
+                        <span class="project-year">${project.year}</span>
+                        <div class="external-links">
+                            ${project.githubUrl ? iconLink(project.githubUrl, "GitHub", githubIcon()) : ""}
+                            ${project.googleDriveUrl ? iconLink(project.googleDriveUrl, "Google Drive", driveIcon()) : ""}
+                            ${project.liveUrl ? iconLink(project.liveUrl, "Live Demo", externalIcon()) : ""}
+                        </div>
                     </div>
                 </div>
                 <h3 class="card-title">${project.title}</h3>
@@ -60,18 +127,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="card-tech">
                     ${project.tech.map((tech) => `<span>${tech}</span>`).join("")}
                 </div>
+                <span class="card-open"><span>Open datasheet</span><span aria-hidden="true">↘</span></span>
             </article>
         `).join("");
 
-        document.querySelectorAll(".project-card").forEach((card) => {
+        projectsGrid.querySelectorAll(".project-card").forEach((card) => {
             card.addEventListener("click", (event) => {
                 if (event.target.closest("a")) {
                     return;
                 }
                 openModal(Number(card.dataset.id));
             });
+            card.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openModal(Number(card.dataset.id));
+                }
+            });
         });
+
+        initTilt(projectsGrid);
     }
+
+    /* ============ EVENTS ============ */
 
     function setupEventListeners() {
         if (themeToggle) {
@@ -126,6 +204,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    /* ============ MODAL ============ */
+
     function openModal(id) {
         const project = projects.find((entry) => entry.id === id);
         if (!project) {
@@ -137,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="modal-header">
                 <div>
                     <h2 id="modal-title" class="modal-title">${project.title}</h2>
-                    <p class="modal-subtitle">${project.role} | ${project.year}</p>
+                    <p class="modal-subtitle">P-${String(project.id).padStart(2, "0")} // ${project.role} // ${project.year}</p>
                 </div>
                 <div class="external-links">
                     ${project.githubUrl ? iconLink(project.githubUrl, "GitHub", githubIcon()) : ""}
@@ -146,11 +226,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </div>
             <p class="modal-copy">${project.longDescription}</p>
-            <h3 class="modal-section-title">Highlights</h3>
+            <h3 class="modal-section-title">// Highlights</h3>
             <ul class="modal-highlights">
                 ${project.highlights.map((highlight) => `<li>${highlight}</li>`).join("")}
             </ul>
-            <h3 class="modal-section-title">Technologies</h3>
+            <h3 class="modal-section-title">// Technologies</h3>
             <div class="card-tech">
                 ${project.tech.map((tech) => `<span>${tech}</span>`).join("")}
             </div>
@@ -172,6 +252,8 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.setAttribute("aria-hidden", "true");
         body.style.overflow = "";
     }
+
+    /* ============ SORTING HELPERS ============ */
 
     function compareProjects(a, b, mode) {
         if (mode === "az") {
@@ -204,6 +286,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return matches ? Number(matches[matches.length - 1]) : 0;
     }
 
+    /* ============ THEME ============ */
+
     function initializeThemeToggle() {
         updateThemeToggleUi(document.documentElement.dataset.theme || "dark");
     }
@@ -224,8 +308,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const isLight = theme === "light";
         themeToggle.setAttribute("aria-pressed", String(isLight));
-        themeToggleText.textContent = isLight ? "Dark Mode" : "Light Mode";
+        themeToggleText.textContent = isLight ? "LIGHT" : "DARK";
     }
+
+    /* ============ SCROLL REVEAL ============ */
 
     function revealSections() {
         const observer = new IntersectionObserver((entries) => {
@@ -235,10 +321,261 @@ document.addEventListener("DOMContentLoaded", () => {
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.14 });
+        }, { threshold: 0.12 });
 
         document.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
     }
+
+    /* ============ TEXT SCRAMBLE / DECODE ============ */
+
+    function initScrambleHeadings() {
+        const targets = document.querySelectorAll("[data-scramble]");
+        if (prefersReducedMotion || targets.length === 0) {
+            return;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    scrambleText(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.4 });
+
+        targets.forEach((element) => observer.observe(element));
+    }
+
+    function scrambleText(element) {
+        const finalText = element.textContent;
+        const glyphs = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#/\\_<>[]";
+        const duration = 900;
+        const start = performance.now();
+
+        function frame(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const lockedCount = Math.floor(progress * finalText.length);
+            let output = "";
+
+            for (let i = 0; i < finalText.length; i += 1) {
+                const char = finalText[i];
+                if (char === " " || i < lockedCount) {
+                    output += char;
+                } else {
+                    output += glyphs[Math.floor(Math.random() * glyphs.length)];
+                }
+            }
+
+            element.textContent = output;
+            if (progress < 1) {
+                window.requestAnimationFrame(frame);
+            } else {
+                element.textContent = finalText;
+            }
+        }
+
+        window.requestAnimationFrame(frame);
+    }
+
+    /* ============ ROLE ROTATOR (TYPEWRITER) ============ */
+
+    function initRoleRotator() {
+        const rotator = document.getElementById("role-rotator");
+        if (!rotator) {
+            return;
+        }
+
+        const roles = [
+            "Software Development",
+            "Mechanical Design",
+            "Robotics & Embedded",
+            "UI/UX Engineering"
+        ];
+
+        if (prefersReducedMotion) {
+            rotator.textContent = roles.join(" · ");
+            return;
+        }
+
+        let roleIndex = 0;
+        let charIndex = roles[0].length;
+        let deleting = false;
+
+        function tick() {
+            const word = roles[roleIndex];
+
+            if (deleting) {
+                charIndex -= 1;
+            } else {
+                charIndex += 1;
+            }
+
+            rotator.textContent = word.slice(0, charIndex);
+
+            let delay = deleting ? 34 : 62;
+            if (!deleting && charIndex === word.length) {
+                delay = 2100;
+                deleting = true;
+            } else if (deleting && charIndex === 0) {
+                deleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+                delay = 380;
+            }
+
+            window.setTimeout(tick, delay);
+        }
+
+        window.setTimeout(tick, 2400);
+    }
+
+    /* ============ STAT COUNTERS ============ */
+
+    function initCounters() {
+        const counters = document.querySelectorAll(".stat-num[data-count]");
+        if (counters.length === 0) {
+            return;
+        }
+
+        if (prefersReducedMotion) {
+            counters.forEach((counter) => {
+                counter.textContent = counter.dataset.count;
+            });
+            return;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    animateCounter(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.6 });
+
+        counters.forEach((counter) => observer.observe(counter));
+    }
+
+    function animateCounter(element) {
+        const target = Number(element.dataset.count);
+        const duration = 1200;
+        const start = performance.now();
+
+        function frame(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            element.textContent = String(Math.round(eased * target));
+            if (progress < 1) {
+                window.requestAnimationFrame(frame);
+            }
+        }
+
+        window.requestAnimationFrame(frame);
+    }
+
+    /* ============ 3D TILT ============ */
+
+    function initTilt(scope = document) {
+        if (prefersReducedMotion || !isFinePointer) {
+            return;
+        }
+
+        scope.querySelectorAll(".tilt").forEach((element) => {
+            if (element.dataset.tiltBound) {
+                return;
+            }
+            element.dataset.tiltBound = "true";
+
+            const maxTilt = Number(element.dataset.tiltMax || 6);
+
+            element.addEventListener("mousemove", (event) => {
+                const rect = element.getBoundingClientRect();
+                const x = (event.clientX - rect.left) / rect.width;
+                const y = (event.clientY - rect.top) / rect.height;
+                element.style.setProperty("--ry", `${(x - 0.5) * maxTilt * 2}deg`);
+                element.style.setProperty("--rx", `${(0.5 - y) * maxTilt * 2}deg`);
+                element.style.setProperty("--mx", `${x * 100}%`);
+                element.style.setProperty("--my", `${y * 100}%`);
+            });
+
+            element.addEventListener("mouseleave", () => {
+                element.style.setProperty("--rx", "0deg");
+                element.style.setProperty("--ry", "0deg");
+            });
+        });
+    }
+
+    /* ============ CURSOR RETICLE + HUD READOUT ============ */
+
+    function initCursorHud() {
+        if (prefersReducedMotion || !isFinePointer) {
+            return;
+        }
+
+        const reticle = document.querySelector(".cursor-reticle");
+        const hudX = document.getElementById("hud-x");
+        const hudY = document.getElementById("hud-y");
+        if (!reticle) {
+            return;
+        }
+
+        const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        const target = { x: pos.x, y: pos.y };
+        let started = false;
+
+        window.addEventListener("mousemove", (event) => {
+            target.x = event.clientX;
+            target.y = event.clientY;
+            if (!started) {
+                started = true;
+                pos.x = target.x;
+                pos.y = target.y;
+                body.classList.add("cursor-on");
+                loop();
+            }
+            if (hudX && hudY) {
+                hudX.textContent = String(Math.round(event.clientX)).padStart(4, "0");
+                hudY.textContent = String(Math.round(event.clientY)).padStart(4, "0");
+            }
+        });
+
+        document.addEventListener("mouseover", (event) => {
+            const interactive = event.target.closest("a, button, .project-card, .spotlight-media, input, select, textarea");
+            reticle.classList.toggle("is-active", Boolean(interactive));
+        });
+
+        function loop() {
+            pos.x += (target.x - pos.x) * 0.22;
+            pos.y += (target.y - pos.y) * 0.22;
+            reticle.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+            window.requestAnimationFrame(loop);
+        }
+    }
+
+    /* ============ MAGNETIC BUTTONS ============ */
+
+    function initMagneticButtons() {
+        if (prefersReducedMotion || !isFinePointer) {
+            return;
+        }
+
+        document.addEventListener("mousemove", (event) => {
+            const magnetic = event.target.closest(".magnetic");
+            document.querySelectorAll(".magnetic").forEach((element) => {
+                if (element !== magnetic) {
+                    element.style.transform = "";
+                }
+            });
+            if (!magnetic) {
+                return;
+            }
+            const rect = magnetic.getBoundingClientRect();
+            const dx = event.clientX - (rect.left + rect.width / 2);
+            const dy = event.clientY - (rect.top + rect.height / 2);
+            magnetic.style.transform = `translate(${dx * 0.18}px, ${dy * 0.22}px)`;
+        });
+    }
+
+    /* ============ ICONS ============ */
 
     function iconLink(url, label, icon) {
         return `<a href="${url}" target="_blank" rel="noopener noreferrer" aria-label="${label}" class="external-link">${icon}</a>`;
