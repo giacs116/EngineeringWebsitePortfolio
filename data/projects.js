@@ -1,5 +1,26 @@
 const projects = [
     {
+        id: 10,
+        title: "Humanoid Arm",
+        shortDescription: "A humanoid robot lower arm designed in SolidWorks, from the wrist joint through to a functioning gripper.",
+        longDescription: "Humanoid Arm is a mechanical design project focused on building the lower arm of a humanoid robot, from the wrist joint through to a functioning gripper. The project involved selecting real actuators against strict torque, voltage, and mass constraints, then designing custom aluminum frames in SolidWorks to connect them into a single working assembly. Beyond CAD, the project required full engineering analysis, calculating the torque needed to lift a payload at full extension and sizing a motor to meet it, demonstrating how mechanical design and applied statics come together in a real robotics system.",
+        year: "2026",
+        role: "Robotic Manipulator Assembly",
+        tech: ["SolidWorks", "Engineering Statics"],
+        highlights: [
+            "Selected and justified a 24V wrist actuator against hard torque, mass, and voltage constraints using real vendor datasheets",
+            "Designed custom 6061-T6 aluminum wrist and forearm frames around measured actuator geometry, meeting strict mass budgets",
+            "Modeled a functioning 1-DOF gripper and wrist joint with proper mate limits, verified through interference detection across the full range of motion",
+            "Calculated elbow actuator torque requirements from CAD-derived mass properties and selected a motor rated to safely lift a 10 lb payload",
+            "Compared multiple real actuator candidates against calculated requirements to justify a final selection"
+        ],
+        googleDriveUrl: "https://drive.google.com/drive/folders/1QAX2ZFsc-RaUpVYZs1DJsQs54mSezNLd?usp=sharing",
+        githubUrl: "",
+        liveUrl: "",
+        image: "assets/humanoid-arm.png",
+        featured: true
+    },
+    {
         id: 1,
         title: "Snake",
         shortDescription: "A classic grid-based game with single and dual-player modes.",
@@ -42,7 +63,7 @@ const projects = [
         title: "The Scale",
         shortDescription: "A data visualization tool built with Streamlit and Python.",
         longDescription: "A web-based application that helps users understand their overall health by inputting physiological and cognitive metrics including heart rate, BMI, reaction speed, EQ, and IQ. The app generates a personalized composite score and was developed collaboratively using Git.",
-        year: "2025-Present",
+        year: "2025-2026",
         role: "Self Assessment Platform",
         tech: ["Python", "Streamlit"],
         highlights: [
@@ -80,7 +101,7 @@ const projects = [
         title: "Glass Coffee Table",
         shortDescription: "A furniture design project modeled in SolidWorks.",
         longDescription: "A surface-modeling exercise focused on more advanced forms, direct editing, and precise control of shape development in SolidWorks.",
-        year: "2025-Present",
+        year: "2025-2026",
         role: "SolidWorks Part: Surfaces & Direct Editing",
         tech: ["SolidWorks"],
         highlights: [
@@ -99,7 +120,7 @@ const projects = [
         title: "Complex Vase",
         shortDescription: "A detailed vase design showcasing advanced surface modeling and direct editing techniques in SolidWorks.",
         longDescription: "A more sculptural CAD project built around reference planes, 3D sketches, filled surfaces, and flexible finishing operations to create a complex form.",
-        year: "2025-Present",
+        year: "2025-2026",
         role: "SolidWorks Part: Surfaces & Direct Editing",
         tech: ["SolidWorks"],
         highlights: [
@@ -118,7 +139,7 @@ const projects = [
         title: "Tapered Thread",
         shortDescription: "A precision modeling project demonstrating tapered thread creation in SolidWorks.",
         longDescription: "A technical threading exercise using helix and spiral geometry, reference planes, and sweep operations to produce accurate tapered thread profiles.",
-        year: "2025-Present",
+        year: "2025-2026",
         role: "SolidWorks Part: Thread",
         tech: ["SolidWorks"],
         highlights: [
@@ -137,7 +158,7 @@ const projects = [
         title: "Threaded Screw",
         shortDescription: "A detailed 3D model of a threaded screw designed in SolidWorks.",
         longDescription: "A fastener-focused CAD model emphasizing accurate thread profiles, standard fastening geometry, and clean feature sequencing in SolidWorks.",
-        year: "2025-Present",
+        year: "2025-2026",
         role: "SolidWorks Part: Thread",
         tech: ["SolidWorks"],
         highlights: [

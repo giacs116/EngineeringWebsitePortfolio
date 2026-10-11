@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const otherTopicInput = document.getElementById("other-topic");
 
     let searchQuery = "";
-    let sortMode = "featured";
+    let sortMode = "index";
 
     renderSpotlight();
     renderProjects();
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ============ FEATURED SPOTLIGHT ============ */
 
     function renderSpotlight() {
-        const spotlightIds = [9, 2]; // SmartMitt, VEX Pen-Plotter Robot
+        const spotlightIds = [10, 9, 2]; // Humanoid Arm, SmartMitt, VEX Pen-Plotter Robot
         const featured = spotlightIds
             .map((id) => projects.find((project) => project.id === id))
             .filter(Boolean);
@@ -256,6 +256,10 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ============ SORTING HELPERS ============ */
 
     function compareProjects(a, b, mode) {
+        if (mode === "index") {
+            return a.id - b.id;
+        }
+
         if (mode === "az") {
             return a.title.localeCompare(b.title);
         }
